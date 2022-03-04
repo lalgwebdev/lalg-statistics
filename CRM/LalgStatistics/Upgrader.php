@@ -13,9 +13,20 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
    * Create SQL Table(s) and Views when the module is installed.
    */
   public function install() {
-    $this->executeSqlFile('sql/CreateSamplesTable.sql');
-	 
-    foreach (scandir('sql/view') as $file) {
+	  _createTablesViews();
+  }
+  
+  /**
+   * Create SQL Table(s) and Views when module is installed.
+   * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
+   */
+  function _createTablesViews() {
+    foreach (scandir('sql/tables') as $file) {
+        if ($file !== '.' && $file !== '..') {
+            $this->executeSqlFile($file);
+        }
+    }
+    foreach (scandir('sql/views') as $file) {
         if ($file !== '.' && $file !== '..') {
             $this->executeSqlFile($file);
         }
@@ -48,14 +59,11 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
   // }
 
   /**
-   * Refresh Views when module is enabled.
+   * Create SQL Tables and Views when module is enabled.
+   * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
    */
   public function enable() {
-    foreach (scandir('sql/view') as $file) {
-        if ($file !== '.' && $file !== '..') {
-            $this->executeSqlFile($file);
-        }
-    }
+	  _createTablesViews();
   }
 
   /**
