@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS lalg_stats_payments
   (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date DATE,				
+  Sample_Date varchar(15),				
   Payment_Type VARCHAR(30),
   Payment_Source VARCHAR(20),
   Revenue_Account VARCHAR(30),
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_payments
 CREATE TABLE IF NOT EXISTS lalg_stats_revenue
   (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date DATE,				
+  Sample_Date varchar(15),				
   Revenue_Account VARCHAR(30),
   Total_Value DECIMAL(10,2),
   Net_Value DECIMAL(10,2),

@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS lalg_stats_membership_durations
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,	
+  Sample_Date varchar(15),	
   Duration int,
   Sample_Count int,
   
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_membership_durations
 CREATE TABLE IF NOT EXISTS lalg_stats_membership_status
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,					
+  Sample_Date varchar(15),					
   Membership_Type varchar(50),
   Membership_Status varchar (20),
   Sample_Count int,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_membership_status
 CREATE TABLE IF NOT EXISTS lalg_stats_membership_actions
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,					
+  Sample_Date varchar(15),					
   Membership_Type varchar(50),
   Membership_Action varchar (20),
   Sample_Count int,

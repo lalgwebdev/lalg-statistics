@@ -3,19 +3,20 @@
 -- Get period to sample
 SET @firstDay = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01');
 SET @lastDay = LAST_DAY(@firstDay);
+SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
 
 -- Membership Actions in Month by Membership Type
   INSERT INTO lalg_stats_membership_actions 
 
   SELECT 
     NULL AS id,
-    @lastDay AS Sample_Date, 
+    @sample_date AS Sample_Date, 
     m_type.name AS Membership_Type,
     CASE m_log.status_id
-      WHEN '1' THEN 'New Join' 
-      WHEN '2' THEN CASE WHEN m_log.start_date = m_log.modified_date THEN 'Re-Join' ELSE 'Renewal' END
-      WHEN '4' THEN 'Lapsed'
-	  WHEN '6' THEN 'Cancelled'
+      WHEN '1' THEN '1: New Join' 
+      WHEN '2' THEN CASE WHEN m_log.start_date = m_log.modified_date THEN '3: Re-Join' ELSE '2: Renewal' END
+      WHEN '4' THEN '4: Lapsed'
+	  WHEN '6' THEN '5: Cancelled'
     END AS Membership_Action,
     COUNT(m_log.id) AS Sample_Count
 
@@ -44,7 +45,7 @@ SET @lastDay = LAST_DAY(@firstDay);
   
   SELECT 
     NULL AS id,
-    @lastDay AS Sample_Date, 
+    @sample_date AS Sample_Date, 
     p_type.name AS Payment_Type,
 	CASE 
 	  WHEN LEFT(contribution.source, 4) = 'User' THEN 'Online'
@@ -74,7 +75,7 @@ SET @lastDay = LAST_DAY(@firstDay);
   
   SELECT 
     NULL AS id,
-    @lastDay AS Sample_Date, 
+    @sample_date AS Sample_Date, 
  	p_account.name AS Revenue_Account,
 	SUM(contribution.total_amount) AS Total_Value,
 	SUM(contribution.net_amount) AS Net_Value

@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS lalg_stats_individuals
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,				
+  Sample_Date varchar(15),				
   Membership_Type varchar(50),
   Sample_Count int,
   
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_individuals
 CREATE TABLE IF NOT EXISTS lalg_stats_households
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,					
+  Sample_Date varchar(15),					
   Membership_Type varchar(50),
   Sample_Count int,
   
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_households
 CREATE TABLE IF NOT EXISTS lalg_stats_individual_ages
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,	
+  Sample_Date varchar(15),	
   Age_Decade varchar(15),
   Sample_Count int,
   
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_individual_ages
 CREATE TABLE IF NOT EXISTS lalg_stats_household_sizes
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,				
+  Sample_Date varchar(15),				
   Household_Size int,
   Sample_Count int,
   
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_household_sizes
 CREATE TABLE IF NOT EXISTS lalg_stats_household_postcodes
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date date,					
+  Sample_Date varchar(15),					
   Postcode_Area varchar(15),
   Sample_Count int,
   

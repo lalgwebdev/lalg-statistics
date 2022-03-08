@@ -2,6 +2,7 @@
 
 -- Sample on first run after end of previous month.  Get Date of end of month
 SELECT @lastDay := LAST_DAY( DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01'));
+SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
 
 -- View to include standard exclusions
 CREATE OR REPLACE VIEW filtered_contact AS 
@@ -15,7 +16,7 @@ INSERT INTO lalg_stats_individuals
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   m_type.name AS Membership_Type,
   COUNT(contact.id) AS Sample_Count
 
@@ -38,7 +39,7 @@ INSERT INTO lalg_stats_households
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   m_type.name AS Membership_Type,
   COUNT(contact.id) AS Sample_Count
 
@@ -61,7 +62,7 @@ INSERT INTO lalg_stats_individual_ages
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   CONCAT(((FLOOR((YEAR(CURRENT_DATE()) - YEAR(contact.birth_date)) / 10.0)) * 10 ), "'s") AS Age_Decade, 
   COUNT(contact.id) AS Sample_Count  
   
@@ -84,7 +85,7 @@ INSERT INTO lalg_stats_household_sizes
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   Household_Size,
   COUNT(*) AS Sample_Count  
   
@@ -114,7 +115,7 @@ INSERT INTO lalg_stats_household_postcodes
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   LEFT(address.postal_code, (LOCATE(' ', address.postal_code) - 1)) AS Postcode_Area,
   COUNT(contact.id) AS Sample_Count  
   
@@ -139,7 +140,7 @@ INSERT INTO lalg_stats_membership_durations
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   YEAR(CURRENT_DATE()) - YEAR(membership.start_date) AS Duration, 
   COUNT(contact.id) AS Sample_Count  
   
@@ -161,9 +162,17 @@ INSERT INTO lalg_stats_membership_status
 
 SELECT 
   NULL AS id,
-  @lastDay AS Sample_Date, 
+  @sample_date AS Sample_Date, 
   m_type.name AS Membership_Type,
-  m_status.label AS Membership_Status,
+  CASE m_status.id
+    WHEN '1' THEN '1: New' 
+    WHEN '2' THEN '2: Current'
+	WHEN '9' THEN '3: Renewal'
+	WHEN '3' THEN '4: Overdue'
+    WHEN '4' THEN '5: Lapsed'
+	WHEN '5' THEN '6: Pending'
+    WHEN '6' THEN '7: Cancelled'
+  END AS Membership_Status,
   COUNT(contact.id) AS Sample_Count
 
 FROM filtered_contact AS contact 
