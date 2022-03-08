@@ -3,7 +3,7 @@
 -- Get period to sample
 SET @firstDay = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01');
 SET @lastDay = LAST_DAY(@firstDay);
-SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
+SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%M-%Y');
 
 -- Membership Actions in Month by Membership Type
   INSERT INTO lalg_stats_membership_actions 
@@ -33,7 +33,7 @@ SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
     AND m_log.status_id IN ('1', '2', '4', '6')
 	
 	AND NOT EXISTS (
-	  SELECT id FROM lalg_stats_membership_actions WHERE Sample_Date = @lastDay
+	  SELECT id FROM lalg_stats_membership_actions WHERE Sample_Date = @sample_date
 	)
 	AND contact.is_deleted = 0
 
@@ -64,7 +64,7 @@ SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
 	AND contact.display_name NOT LIKE '%watir%'
 	
 	AND NOT EXISTS (
-	  SELECT id FROM lalg_stats_payments WHERE Sample_Date = @lastDay
+	  SELECT id FROM lalg_stats_payments WHERE Sample_Date = @sample_date
 	)
 
   GROUP BY p_type.name, Payment_Source, Revenue_Account ;
@@ -89,7 +89,7 @@ SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
 	AND contact.display_name NOT LIKE '%watir%'
 	
 	AND NOT EXISTS (
-	  SELECT id FROM lalg_stats_revenue WHERE Sample_Date = @lastDay
+	  SELECT id FROM lalg_stats_revenue WHERE Sample_Date = @sample_date
 	)
 
   GROUP BY Revenue_Account ;

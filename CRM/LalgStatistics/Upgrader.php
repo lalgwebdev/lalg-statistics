@@ -6,6 +6,29 @@ use CRM_LalgStatistics_ExtensionUtil as E;
  */
 class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
 
+  
+  /**
+   * Create SQL Table(s) and Views when module is installed.
+   * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
+   */
+  function createTablesViews() {
+dpm(dirname(__FILE__));
+	$extdir = dirname(__FILE__) . '/../../';
+dpm($extdir);
+    foreach (scandir($extdir . 'sql/tables') as $file) {
+dpm('sql/tables/' . $file);
+        if ($file !== '.' && $file !== '..') {
+            $this->executeSqlFile('sql/tables/' . $file);
+        }
+    }
+    foreach (scandir($extdir . 'sql/views') as $file) {
+        if ($file !== '.' && $file !== '..') {
+            $this->executeSqlFile('sql/views/' . $file);
+        }
+    }
+  }
+
+
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
 
@@ -13,24 +36,7 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
    * Create SQL Table(s) and Views when the module is installed.
    */
   public function install() {
-	  _createTablesViews();
-  }
-  
-  /**
-   * Create SQL Table(s) and Views when module is installed.
-   * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
-   */
-  function _createTablesViews() {
-    foreach (scandir('sql/tables') as $file) {
-        if ($file !== '.' && $file !== '..') {
-            $this->executeSqlFile($file);
-        }
-    }
-    foreach (scandir('sql/views') as $file) {
-        if ($file !== '.' && $file !== '..') {
-            $this->executeSqlFile($file);
-        }
-    }
+	  $this->createTablesViews();
   }
 
   /**
@@ -63,7 +69,7 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
    * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
    */
   public function enable() {
-	  _createTablesViews();
+	  $this->createTablesViews();
   }
 
   /**

@@ -2,7 +2,7 @@
 
 -- Sample on first run after end of previous month.  Get Date of end of month
 SELECT @lastDay := LAST_DAY( DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01'));
-SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%m-%Y');
+SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%M-%Y');
 
 -- View to include standard exclusions
 CREATE OR REPLACE VIEW filtered_contact AS 
@@ -28,7 +28,7 @@ WHERE contact.contact_type = 'Individual'
   AND membership.status_id IN (1, 2, 3, 9)  
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_individuals WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_individuals WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Membership_Type ;
@@ -51,7 +51,7 @@ WHERE contact.contact_type = 'Household'
   AND membership.status_id IN (1, 2, 3, 9) 
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_households WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_households WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Membership_Type ;  
@@ -74,7 +74,7 @@ WHERE contact.contact_type = 'Individual'
   AND membership.status_id IN (1, 2, 3, 9)
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_individual_ages WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_individual_ages WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Age_Decade ;
@@ -104,7 +104,7 @@ SELECT
   ) AS sizes 
   
   WHERE NOT EXISTS (
-    SELECT id FROM lalg_stats_household_sizes WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_household_sizes WHERE Sample_Date = @sample_date
   )
 
   GROUP BY Household_Size ;
@@ -129,7 +129,7 @@ WHERE contact.contact_type = 'Household'
   AND membership.status_id IN (1, 2, 3, 9)
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_household_postcodes WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_household_postcodes WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Postcode_Area ;
@@ -151,7 +151,7 @@ WHERE contact.contact_type = 'Household'
   AND membership.status_id IN (1, 2, 3, 9)
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_membership_durations WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_membership_durations WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Duration ;
@@ -183,7 +183,7 @@ FROM filtered_contact AS contact
 WHERE contact.contact_type = 'Household'
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_membership_status WHERE Sample_Date = @lastDay
+    SELECT id FROM lalg_stats_membership_status WHERE Sample_Date = @sample_date
   )
   
 GROUP BY Membership_Type, Membership_Status ;  
