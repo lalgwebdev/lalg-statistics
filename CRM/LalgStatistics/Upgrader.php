@@ -12,11 +12,8 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
    * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
    */
   function createTablesViews() {
-dpm(dirname(__FILE__));
 	$extdir = dirname(__FILE__) . '/../../';
-dpm($extdir);
     foreach (scandir($extdir . 'sql/tables') as $file) {
-dpm('sql/tables/' . $file);
         if ($file !== '.' && $file !== '..') {
             $this->executeSqlFile('sql/tables/' . $file);
         }

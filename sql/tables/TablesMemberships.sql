@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_membership_status
   Sample_Date varchar(15),					
   Membership_Type varchar(50),
   Membership_Status varchar (20),
+  Status_Weight int,
   Sample_Count int,
   
   INDEX date_index (Sample_Date),
@@ -35,6 +36,7 @@ CREATE TABLE IF NOT EXISTS lalg_stats_membership_actions
   Sample_Date varchar(15),					
   Membership_Type varchar(50),
   Membership_Action varchar (20),
+  Action_Weight int,
   Sample_Count int,
   
   INDEX date_index (Sample_Date),

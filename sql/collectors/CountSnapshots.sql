@@ -2,7 +2,7 @@
 
 -- Sample on first run after end of previous month.  Get Date of end of month
 SELECT @lastDay := LAST_DAY( DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01'));
-SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%M-%Y');
+SET @sample_date = @lastDay;
 
 -- View to include standard exclusions
 CREATE OR REPLACE VIEW filtered_contact AS 
@@ -165,14 +165,15 @@ SELECT
   @sample_date AS Sample_Date, 
   m_type.name AS Membership_Type,
   CASE m_status.id
-    WHEN '1' THEN '1: New' 
-    WHEN '2' THEN '2: Current'
-	WHEN '9' THEN '3: Renewal'
-	WHEN '3' THEN '4: Overdue'
-    WHEN '4' THEN '5: Lapsed'
-	WHEN '5' THEN '6: Pending'
-    WHEN '6' THEN '7: Cancelled'
-  END AS Membership_Status,
+    WHEN '1' THEN '1' 
+    WHEN '2' THEN '2'
+	WHEN '9' THEN '3'
+	WHEN '3' THEN '4'
+    WHEN '4' THEN '5'
+	WHEN '5' THEN '6'
+    WHEN '6' THEN '7'
+  END AS Status_Weight,
+  m_status.label AS Membership_Status,
   COUNT(contact.id) AS Sample_Count
 
 FROM filtered_contact AS contact 

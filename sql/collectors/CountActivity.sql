@@ -3,7 +3,7 @@
 -- Get period to sample
 SET @firstDay = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01');
 SET @lastDay = LAST_DAY(@firstDay);
-SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%M-%Y');
+SET @sample_date = @lastDay;
 
 -- Membership Actions in Month by Membership Type
   INSERT INTO lalg_stats_membership_actions 
@@ -13,11 +13,17 @@ SET @sample_date = DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%M-%Y');
     @sample_date AS Sample_Date, 
     m_type.name AS Membership_Type,
     CASE m_log.status_id
-      WHEN '1' THEN '1: New Join' 
-      WHEN '2' THEN CASE WHEN m_log.start_date = m_log.modified_date THEN '3: Re-Join' ELSE '2: Renewal' END
-      WHEN '4' THEN '4: Lapsed'
-	  WHEN '6' THEN '5: Cancelled'
+      WHEN '1' THEN 'New Join' 
+      WHEN '2' THEN CASE WHEN m_log.start_date = m_log.modified_date THEN 'Re-Join' ELSE 'Renewal' END
+      WHEN '4' THEN 'Lapsed'
+	  WHEN '6' THEN 'Cancelled'
     END AS Membership_Action,
+    CASE m_log.status_id
+      WHEN '1' THEN '1' 
+      WHEN '2' THEN CASE WHEN m_log.start_date = m_log.modified_date THEN '3' ELSE '2' END
+      WHEN '4' THEN '4'
+	  WHEN '6' THEN '5'
+    END AS Action_Weight,	
     COUNT(m_log.id) AS Sample_Count
 
   FROM civicrm_membership_log AS m_log 
