@@ -141,16 +141,16 @@ SELECT
   NULL AS id,
   @sample_date AS Sample_Date, 
   m_type.name AS Membership_Type,
-  CASE m_status.id
-    WHEN '1' THEN '1' 
-    WHEN '2' THEN '2'
-	WHEN '9' THEN '3'
-	WHEN '3' THEN '4'
-    WHEN '4' THEN '5'
-	WHEN '5' THEN '6'
-    WHEN '6' THEN '7'
-  END AS Status_Weight,
   m_status.label AS Membership_Status,
+  CASE m_status.id
+    WHEN 1 THEN '1' 
+    WHEN 2 THEN '2'
+	WHEN 9 THEN '3'
+	WHEN 3 THEN '4'
+    WHEN 4 THEN '5'
+	WHEN 5 THEN '6'
+    WHEN 6 THEN '7'
+  END AS Status_Weight,
   COUNT(contact.id) AS Sample_Count
 
 FROM lalg_stats_filtered_contact AS contact 
