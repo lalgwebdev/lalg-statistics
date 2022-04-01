@@ -5,56 +5,33 @@ SELECT @lastDay := LAST_DAY( DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01'
 SET @sample_date = @lastDay;
 
 -- View to include standard exclusions
-CREATE OR REPLACE VIEW filtered_contact AS 
+CREATE OR REPLACE VIEW lalg_stats_filtered_contact AS 
   SELECT * FROM civicrm_contact 
   WHERE display_name NOT LIKE '%watir%' 
     AND is_deceased = 0;
 	
 
--- Individual Members by Membership Type
-INSERT INTO lalg_stats_individuals
+-- Contacts by Contact Type & Membership Type
+INSERT INTO lalg_stats_contacts
 
 SELECT 
   NULL AS id,
   @sample_date AS Sample_Date, 
+  contact.contact_type AS Contact_Type,
   m_type.name AS Membership_Type,
   COUNT(contact.id) AS Sample_Count
 
-FROM filtered_contact AS contact 
+FROM lalg_stats_filtered_contact AS contact 
   INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id
   INNER JOIN civicrm_membership_type AS m_type ON membership.membership_type_id = m_type.id 
 
-WHERE contact.contact_type = 'Individual'
-  AND membership.status_id IN (1, 2, 3, 9)  
+WHERE membership.status_id IN (1, 2, 3, 9)  
   
   AND NOT EXISTS (
-    SELECT id FROM lalg_stats_individuals WHERE Sample_Date = @sample_date
+    SELECT id FROM lalg_stats_contacts WHERE Sample_Date = @sample_date
   )
   
-GROUP BY Membership_Type ;
-
-
--- Household Memberships by Membership Type
-INSERT INTO lalg_stats_households
-
-SELECT 
-  NULL AS id,
-  @sample_date AS Sample_Date, 
-  m_type.name AS Membership_Type,
-  COUNT(contact.id) AS Sample_Count
-
-FROM filtered_contact AS contact 
-  INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id
-  INNER JOIN civicrm_membership_type AS m_type ON membership.membership_type_id = m_type.id 
-
-WHERE contact.contact_type = 'Household'
-  AND membership.status_id IN (1, 2, 3, 9) 
-  
-  AND NOT EXISTS (
-    SELECT id FROM lalg_stats_households WHERE Sample_Date = @sample_date
-  )
-  
-GROUP BY Membership_Type ;  
+GROUP BY Contact_Type, Membership_Type ;
  
  
 -- Individual Member Age distribution by Decade 
@@ -66,7 +43,7 @@ SELECT
   CONCAT(((FLOOR((YEAR(CURRENT_DATE()) - YEAR(contact.birth_date)) / 10.0)) * 10 ), "'s") AS Age_Decade, 
   COUNT(contact.id) AS Sample_Count  
   
-FROM filtered_contact AS contact  
+FROM lalg_stats_filtered_contact AS contact  
   INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id  
   
 WHERE contact.contact_type = 'Individual'
@@ -92,7 +69,7 @@ SELECT
   FROM (
     SELECT COUNT(relationship.id) AS Household_Size
 	
-	FROM filtered_contact AS contact  
+	FROM lalg_stats_filtered_contact AS contact  
       INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id  
       INNER JOIN civicrm_relationship AS relationship ON contact.id = relationship.contact_id_b
   
@@ -119,7 +96,7 @@ SELECT
   LEFT(address.postal_code, (LOCATE(' ', address.postal_code) - 1)) AS Postcode_Area,
   COUNT(contact.id) AS Sample_Count  
   
-FROM filtered_contact AS contact  
+FROM lalg_stats_filtered_contact AS contact  
   INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id  
   INNER JOIN civicrm_address AS address ON contact.id = address.contact_id
   
@@ -144,7 +121,7 @@ SELECT
   YEAR(CURRENT_DATE()) - YEAR(membership.start_date) AS Duration, 
   COUNT(contact.id) AS Sample_Count  
   
-FROM filtered_contact AS contact  
+FROM lalg_stats_filtered_contact AS contact  
   INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id  
   
 WHERE contact.contact_type = 'Household'
@@ -176,7 +153,7 @@ SELECT
   m_status.label AS Membership_Status,
   COUNT(contact.id) AS Sample_Count
 
-FROM filtered_contact AS contact 
+FROM lalg_stats_filtered_contact AS contact 
   INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id
   INNER JOIN civicrm_membership_type AS m_type ON membership.membership_type_id = m_type.id 
   INNER JOIN civicrm_membership_status AS m_status ON membership.status_id = m_status.id

@@ -1,26 +1,16 @@
 /* Create the Tables for Contact Statistics */
 
--- Count Active Members by Membership Type
-CREATE TABLE IF NOT EXISTS lalg_stats_individuals
+-- Count Active Contacts by Contact Type & Membership Type
+CREATE TABLE IF NOT EXISTS lalg_stats_contacts
   (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date varchar(15),				
+  Sample_Date varchar(15),
+  Contact_Type varchar(15),  
   Membership_Type varchar(50),
   Sample_Count int,
   
   INDEX date_index (Sample_Date),
-  INDEX membership_type_index (Membership_Type)
-  );
-
--- Count Active Memberships (Households) by Membership Type
-CREATE TABLE IF NOT EXISTS lalg_stats_households
-  (
-  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Sample_Date varchar(15),					
-  Membership_Type varchar(50),
-  Sample_Count int,
-  
-  INDEX date_index (Sample_Date),
+  INDEX contact_type_index (Contact_Type),
   INDEX membership_type_index (Membership_Type)
   );
   
