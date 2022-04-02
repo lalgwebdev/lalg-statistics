@@ -6,6 +6,14 @@ CREATE OR REPLACE VIEW lalg_stats_view_annual_actions AS
 SELECT YEAR(Sample_Date), Membership_Action, Action_Weight, SUM(Sample_Count) 
 FROM lalg_stats_membership_actions 
 GROUP BY YEAR(Sample_Date), Membership_Action;
+
+-- Annual aggregation of Payment Revenue
+CREATE OR REPLACE VIEW lalg_stats_view_annual_revenue AS
+
+SELECT YEAR(Sample_Date), Revenue_Account, SUM(Total_Value) 
+FROM lalg_stats_revenue
+GROUP BY YEAR(Sample_Date), Revenue_Account;
+
   
   
 -- Select Membership Status for Latest Month
@@ -30,4 +38,17 @@ JOIN (
        FROM lalg_stats_membership_durations
      ) AS b 
   ON a.Sample_date = b.maxd  
+  
+    
+-- Select Payments for Latest Month
+CREATE OR REPLACE VIEW lalg_stats_view_latest_payment AS
+
+SELECT a.*
+FROM lalg_stats_payments AS a
+JOIN ( 
+       SELECT MAX(Sample_Date) AS maxd
+       FROM lalg_stats_payments
+     ) AS b 
+  ON a.Sample_date = b.maxd  
+  
   

@@ -52,28 +52,34 @@ SET @sample_date = @lastDay;
   SELECT 
     NULL AS id,
     @sample_date AS Sample_Date, 
-    p_type.name AS Payment_Type,
-	CASE 
-	  WHEN LEFT(contribution.source, 4) = 'User' THEN 'Online'
-	  ELSE 'Offline'
+	CASE payment.payment_processor_id
+      WHEN 3 THEN 'Cash'
+      WHEN 5 THEN 'Cheque'
+      WHEN 7 THEN 'BACS Offline'
+      WHEN 11 THEN 'Credit/Debit Card'
+    END AS Payment_Type,
+    CASE
+	  WHEN LEFT(contribution.source, 5) = 'Admin' THEN 'Offline'
+	  ELSE 'Online'
 	END AS Payment_Source,
 	p_account.name AS Revenue_Account,
 	COUNT(contribution.id) AS Sample_Count
 
   FROM civicrm_contribution AS contribution
-    INNER JOIN civicrm_payment_processor AS p_type ON p_type.id = contribution.payment_instrument_id
+    INNER JOIN civicrm_entity_financial_trxn AS c_p ON c_p.entity_id = contribution.id
+    INNER JOIN civicrm_financial_trxn AS payment ON payment.id = c_p.financial_trxn_id
     INNER JOIN civicrm_financial_type AS p_account ON p_account.id = contribution.financial_type_id
-    INNER JOIN civicrm_contact AS contact ON contact.id = contribution.contact_id
 	
   WHERE DATE(contribution.receive_date) >= @firstDay
     AND DATE(contribution.receive_date) <= @lastDay
-	AND contact.display_name NOT LIKE '%watir%'
+    AND c_p.entity_table = 'civicrm_contribution'
+	AND payment.payment_processor_id IN (3, 5, 7, 11)
 	
 	AND NOT EXISTS (
 	  SELECT id FROM lalg_stats_payments WHERE Sample_Date = @sample_date
 	)
 
-  GROUP BY p_type.name, Payment_Source, Revenue_Account ;
+  GROUP BY Payment_Type, Payment_Source, Revenue_Account ;
 
 
 -- Payment Value in Month by Payment Account 
