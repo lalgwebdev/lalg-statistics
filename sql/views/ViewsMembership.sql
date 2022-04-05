@@ -15,7 +15,8 @@ FROM lalg_stats_revenue
 GROUP BY YEAR(Sample_Date), Revenue_Account;
 
   
-  
+/* Views with sub-queries cause Backup errors.  Suspected MySQL bug */
+/* 
 -- Select Membership Status for Latest Month
 CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_latest_status AS
 
@@ -50,5 +51,5 @@ JOIN (
        FROM lalg_stats_payments
      ) AS b 
   ON a.Sample_date = b.maxd;  
-  
+*/  
   

@@ -1,5 +1,7 @@
 /* Create Views to aggregate or filter Tables for Contacts Statistics */
 
+/* Views with sub-queries cause Backup errors.  Suspected MySQL bug */
+/*
 -- Select Household Sizes for Latest Month
 CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_latest_sizes AS
 
@@ -22,5 +24,5 @@ JOIN (
        FROM lalg_stats_household_postcodes
      ) AS b 
   ON a.Sample_date = b.maxd;  
-  
+*/  
   
