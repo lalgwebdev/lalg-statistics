@@ -25,7 +25,7 @@ JOIN (
        SELECT MAX(Sample_Date) AS maxd
        FROM lalg_stats_membership_status
      ) AS b 
-  ON a.Sample_date = b.maxd  
+  ON a.Sample_date = b.maxd ; 
   
   
 -- Select Membership Durations for Latest Month
@@ -37,7 +37,7 @@ JOIN (
        SELECT MAX(Sample_Date) AS maxd
        FROM lalg_stats_membership_durations
      ) AS b 
-  ON a.Sample_date = b.maxd  
+  ON a.Sample_date = b.maxd ; 
   
     
 -- Select Payments for Latest Month
@@ -49,6 +49,6 @@ JOIN (
        SELECT MAX(Sample_Date) AS maxd
        FROM lalg_stats_payments
      ) AS b 
-  ON a.Sample_date = b.maxd  
+  ON a.Sample_date = b.maxd;  
   
   

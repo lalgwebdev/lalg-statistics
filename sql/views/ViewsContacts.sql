@@ -9,7 +9,7 @@ JOIN (
        SELECT MAX(Sample_Date) AS maxd
        FROM lalg_stats_household_sizes
      ) AS b 
-  ON a.Sample_date = b.maxd
+  ON a.Sample_date = b.maxd;
   
   
 -- Select Household Postcodes for Latest Month
@@ -21,6 +21,6 @@ JOIN (
        SELECT MAX(Sample_Date) AS maxd
        FROM lalg_stats_household_postcodes
      ) AS b 
-  ON a.Sample_date = b.maxd  
+  ON a.Sample_date = b.maxd;  
   
   
