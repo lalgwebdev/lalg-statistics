@@ -1,7 +1,7 @@
 /* Create Views to aggregate or filter Tables for Contacts Statistics */
 
 -- Select Household Sizes for Latest Month
-CREATE OR REPLACE VIEW lalg_stats_view_latest_sizes AS
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_latest_sizes AS
 
 SELECT a.*
 FROM lalg_stats_household_sizes AS a
@@ -13,7 +13,7 @@ JOIN (
   
   
 -- Select Household Postcodes for Latest Month
-CREATE OR REPLACE VIEW lalg_stats_view_latest_postcodes AS
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_latest_postcodes AS
 
 SELECT a.*
 FROM lalg_stats_household_postcodes AS a

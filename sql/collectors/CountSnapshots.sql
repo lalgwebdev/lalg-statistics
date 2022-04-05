@@ -5,7 +5,7 @@ SELECT @lastDay := LAST_DAY( DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01'
 SET @sample_date = @lastDay;
 
 -- View to include standard exclusions
-CREATE OR REPLACE VIEW lalg_stats_filtered_contact AS 
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_filtered_contact AS 
   SELECT * FROM civicrm_contact 
   WHERE display_name NOT LIKE '%watir%' 
     AND is_deceased = 0;
