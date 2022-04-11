@@ -14,17 +14,41 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
   function createTablesViews() {
 	$extdir = dirname(__FILE__) . '/../../';
     foreach (scandir($extdir . 'sql/tables') as $file) {
-        if ($file !== '.' && $file !== '..') {
+        if ($file !== '.' && $file !== '..' && (strrpos($file, '.sql') === strlen($file) - 4)) {
             $this->executeSqlFile('sql/tables/' . $file);
         }
     }
     foreach (scandir($extdir . 'sql/views') as $file) {
-        if ($file !== '.' && $file !== '..') {
+        if ($file !== '.' && $file !== '..' && (strrpos($file, '.sql') === strlen($file) - 4)) {
             $this->executeSqlFile('sql/views/' . $file);
         }
     }
   }
-
+  
+  function createScheduledJob() {
+	$jName = 'LALG Collect Statistics';
+	// Check if Job already exists  
+	$result = civicrm_api3('Job', 'get', [
+      'sequential' => 1,
+      'name' => $jName,
+    ]);  
+	if ($result['count'] == 0) {
+	  // None found so create it
+      $result = civicrm_api3('Job', 'create', [
+        'run_frequency' => "Daily",
+        'name' => $jName,
+        'api_entity' => "LalgStatistics",
+        'api_action' => "getsamples",
+        'description' => "Run the LALG Statistics collector job",
+        'is_active' => 1,
+      ]);
+	} 
+	else {
+	  //Ensure it is enabled
+	  $jid = $result['values'][0]['id'];
+	  $success = CRM_Core_BAO_Job::setIsActive($jid, true);
+	}
+  }
 
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
@@ -34,6 +58,7 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
    */
   public function install() {
 	  $this->createTablesViews();
+	  $this->createScheduledJob();
   }
 
   /**
@@ -64,9 +89,11 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
   /**
    * Create SQL Tables and Views when module is enabled.
    * SQL is written to skip if Tables exist already, and Refresh Views if they exist.
+   * Also create the Scheduled Job if it doesn't already exist
    */
   public function enable() {
 	  $this->createTablesViews();
+	  $this->createScheduledJob();
   }
 
   /**
@@ -75,6 +102,19 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
   // public function disable() {
   //   CRM_Core_DAO::executeQuery('UPDATE foo SET is_active = 0 WHERE bar = "whiz"');
   // }
+  
+  /**
+   * Disable the Schedules Collector Job
+   */
+  public function disable() {
+	$result = civicrm_api3('Job', 'get', [
+      'sequential' => 1,
+      'name' => 'LALG Collect Statistics',
+    ]);  
+	$jid = $result['values'][0]['id'];
+	$success = CRM_Core_BAO_Job::setIsActive($jid, false);
+  }  	  
+	   
 
   /**
    * Example: Run a couple simple queries.
