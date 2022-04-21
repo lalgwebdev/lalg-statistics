@@ -41,7 +41,7 @@ SET @sample_date = @lastDay;
 	AND NOT EXISTS (
 	  SELECT id FROM lalg_stats_membership_actions WHERE Sample_Date = @sample_date
 	)
-	AND contact.is_deleted = 0
+	AND (contact.is_deleted = 0 OR m_log.status_id = 6)
 
   GROUP BY Membership_Type, Membership_Action ;
 

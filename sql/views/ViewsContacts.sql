@@ -14,3 +14,12 @@ SELECT * FROM lalg_stats_household_postcodes AS a
 WHERE (a.Sample_Date = (SELECT MAX(b.Sample_Date) FROM lalg_stats_household_postcodes AS b));
  
   
+-- Annual aggregation of Contact numbers
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_annual_contacts AS
+
+SELECT YEAR(Sample_Date) AS Year, Contact_Type, Membership_Type, 
+	ROUND(AVG(Sample_Count), 0) AS Average, MAX(Sample_Count) AS Max, MIN(Sample_Count) AS Min
+FROM lalg_stats_contacts 
+GROUP BY YEAR(Sample_Date), Contact_Type, Membership_Type
+ORDER BY YEAR(Sample_Date);
+
