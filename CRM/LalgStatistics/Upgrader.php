@@ -25,6 +25,9 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
     }
   }
   
+  /**
+   * Create the Scheduled Job which runs the sample collector
+   */
   function createScheduledJob() {
 	$jName = 'LALG Collect Statistics';
 	// Check if Job already exists  
@@ -128,6 +131,20 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
   //   CRM_Core_DAO::executeQuery('DELETE FROM bang WHERE willy = wonka(2)');
   //   return TRUE;
   // }
+  
+  /**
+   * Upgrade to v1.10.  Creates new Views.
+   *
+   * @return TRUE on success
+   * @throws Exception
+   */
+  public function upgrade_1010(): bool {
+    $this->ctx->log->info('Applying update 1010');
+	$this->createTablesViews();
+	$this->createScheduledJob();
+    return TRUE;
+  }
+ 
 
 
   /**
