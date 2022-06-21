@@ -145,7 +145,11 @@ class CRM_LalgStatistics_Upgrader extends CRM_LalgStatistics_Upgrader_Base {
     return TRUE;
   }
  
-
+  public function upgrade_1011(): bool {
+    $this->ctx->log->info('Applying update 1011');
+	$this->createTablesViews();
+    return TRUE; 
+  }
 
   /**
    * Example: Run an external SQL script.

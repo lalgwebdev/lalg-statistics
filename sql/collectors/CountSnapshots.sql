@@ -166,3 +166,27 @@ WHERE contact.contact_type = 'Household'
   
 GROUP BY Membership_Type, Membership_Status ;  
 
+
+-- Membership (Household) Renewals by Month 
+INSERT INTO lalg_stats_membership_renewal_dates
+
+SELECT 
+  NULL AS id,
+  @sample_date AS Sample_Date, 
+  m_type.name AS Membership_Type,
+  DATE_FORMAT(membership.end_date,'%Y-%m-01') AS Renewal_Month, 
+  COUNT(contact.id) AS Sample_Count  
+  
+FROM lalg_stats_filtered_contact AS contact  
+  INNER JOIN civicrm_membership AS membership ON contact.id = membership.contact_id  
+  INNER JOIN civicrm_membership_type AS m_type ON membership.membership_type_id = m_type.id  
+  
+WHERE contact.contact_type = 'Household'
+  AND membership.status_id IN (1, 2, 3, 9)
+  AND membership.end_date < (CURDATE() + INTERVAL 14 MONTH)
+  
+  AND NOT EXISTS (
+    SELECT id FROM lalg_stats_membership_renewal_dates WHERE Sample_Date = @sample_date
+  )
+  
+GROUP BY Membership_Type, Renewal_Month;
