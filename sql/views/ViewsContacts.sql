@@ -23,3 +23,10 @@ FROM lalg_stats_contacts
 GROUP BY YEAR(Sample_Date), Contact_Type, Membership_Type
 ORDER BY YEAR(Sample_Date);
 
+  
+-- Select Household Renewal Dates for Latest Month
+CREATE OR REPLACE SQL SECURITY INVOKER VIEW lalg_stats_view_latest_renewal_dates AS
+
+SELECT * FROM lalg_stats_membership_renewal_dates AS a 
+WHERE (a.Sample_Date = (SELECT MAX(b.Sample_Date) FROM lalg_stats_membership_renewal_dates AS b));
+
